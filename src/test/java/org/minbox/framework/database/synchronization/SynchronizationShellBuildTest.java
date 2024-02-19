@@ -17,6 +17,8 @@
 
 package org.minbox.framework.database.synchronization;
 
+import org.minbox.framework.database.synchronization.config.Config;
+
 /**
  * 同步shell脚本构建测试类
  *

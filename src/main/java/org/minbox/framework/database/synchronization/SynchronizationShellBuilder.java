@@ -1,6 +1,10 @@
 package org.minbox.framework.database.synchronization;
 
 import org.apache.commons.lang3.StringUtils;
+import org.minbox.framework.database.synchronization.config.Config;
+import org.minbox.framework.database.synchronization.config.Connection;
+import org.minbox.framework.database.synchronization.config.Database;
+import org.minbox.framework.database.synchronization.config.Table;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,24 +27,32 @@ public class SynchronizationShellBuilder {
         FileWriter writer = new FileWriter(SHELL_FILE_NAME);
         writer.write(SHELL_HEADER);
         writer.write("\n\n");
-        config.getTables().forEach(table -> {
+        config.getDatabases().forEach(database -> {
             try {
-                writer.write("# Execute synchronization " + table.getName() + " table");
+                writer.write("# Execute synchronization source " + database.getSource().getSchema() + " database.");
                 writer.write("\n");
-                writer.write(StringUtils.join(this.getFormattedCmd(table), " "));
-                writer.write("\n\n");
-                System.out.println("[Table][" + table.getName() + "], [Where][" + (table.getWhere() != null && !table.getWhere().isEmpty() ? table.getWhere() : "") + "]同步命令写入成功.");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            database.getTables().forEach(table -> {
+                try {
+                    writer.write("# Execute synchronization " + table.getName() + " table");
+                    writer.write("\n");
+                    writer.write(StringUtils.join(this.getFormattedCmd(database, table), " "));
+                    writer.write("\n\n");
+                    System.out.println("[Database][" + database.getSource().getSchema() + "], [Table][" + table.getName() + "], [Where][" + (table.getWhere() != null && !table.getWhere().isEmpty() ? table.getWhere() : "") + "]同步命令写入成功.");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         });
         writer.close();
         System.out.println("[synchronization.sh]脚本生成完成.");
     }
 
-    private String[] getFormattedCmd(Config.Table table) {
-        Config.Connection source = config.getSource();
-        Config.Connection target = config.getTarget();
+    private String[] getFormattedCmd(Database database, Table table) {
+        Connection source = database.getSource();
+        Connection target = database.getTarget();
         // @formatter:off
         return new String[] {
                 "pt-archiver",

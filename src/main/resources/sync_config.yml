@@ -1,31 +1,53 @@
 # 数据库连接信息
 connection:
-  # 源库配置
-  source:
-    schema: saas
-    ip: 127.0.0.1
-    port: 3306
-    username: developer
-    password: iamadeveloper
-  # 目标库配置
-  target:
-    schema: archiver
-    ip: 127.0.0.1
-    port: 3306
-    username: developer
-    password: iamadeveloper
-# 需要同步的表
-# 格式：TableName,Where
-tables:
-  - car
-  - group
-  - authority_account
-  - authority_account_type
-  - authority_menu
-  - authority_role
-  - authority_request_uri
-  - clean_road
-  - clean_road_segment
-  - clean_road_task
-  - garbage_point
-  - clean_car_daily_road;DATE_SUB(CURDATE(), INTERVAL 7 DAY) < date(target_date)
+  # 第一个数据库
+  -
+    # 源库配置
+    source:
+      schema: saas
+      ip: 127.0.0.1
+      port: 3306
+      username: developer
+      password: iamadeveloper
+    # 目标库配置
+    target:
+      schema: archiver
+      ip: 127.0.0.1
+      port: 3306
+      username: developer
+      password: iamadeveloper
+    # 需要同步的表
+    # 格式：TableName,Where
+    tables:
+      - car
+      - group
+      - authority_account
+      - authority_account_type
+      - authority_menu
+      - authority_role
+      - authority_request_uri
+      - clean_road
+      - clean_road_segment
+      - clean_road_task
+      - garbage_point
+      - clean_car_daily_road;DATE_SUB(CURDATE(), INTERVAL 7 DAY) < date(target_date)
+  # 第二个数据库
+  -
+    # 源库配置
+    source:
+      schema: metadata
+      ip: 127.0.0.1
+      port: 3306
+      username: developer
+      password: iamadeveloper
+    # 目标库配置
+    target:
+      schema: archiver
+      ip: 127.0.0.1
+      port: 3306
+      username: developer
+      password: iamadeveloper
+    # 需要同步的表
+    # 格式：TableName,Where
+    tables:
+      - osm_road
